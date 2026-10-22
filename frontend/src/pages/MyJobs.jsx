@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 
 function MyJobs() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [posted, setPosted] = useState([]);
   const [quoted, setQuoted] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,10 +14,12 @@ function MyJobs() {
   useEffect(() => {
     async function load() {
       try {
-        const [mineRes, quotesRes] = await Promise.all([
+        const [meRes, mineRes, quotesRes] = await Promise.all([
+          api.get("/auth/me"),
           api.get("/requests/mine"),
           api.get("/quotes/mine"),
         ]);
+        setUser(meRes.data);
         setPosted(mineRes.data);
 
         const items = await Promise.all(
@@ -50,6 +53,15 @@ function MyJobs() {
 
         {!loading && !error && (
           <>
+            {user && (
+              <p className="meta">
+                {user.name} ·{" "}
+                {user.rating_avg
+                  ? `★ ${user.rating_avg} average rating`
+                  : "No ratings yet"}
+              </p>
+            )}
+
             <h2>Requests I posted</h2>
             {posted.length === 0 && <p>You haven't posted any requests.</p>}
             {posted.map((r) => (
