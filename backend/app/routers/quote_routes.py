@@ -1,13 +1,14 @@
 from datetime import datetime, timezone
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.auth import get_current_user
 from app.database import get_db
 from app.routers.request_routes import expire_old_requests
+from app.email_service import notify_new_quote
 
 router = APIRouter(tags=["Quotes"])
 
@@ -20,6 +21,7 @@ router = APIRouter(tags=["Quotes"])
 def submit_quote(
     request_id: int,
     quote_in: schemas.QuoteCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -57,6 +59,17 @@ def submit_quote(
     db.add(quote)
     db.commit()
     db.refresh(quote)
+
+    background_tasks.add_task(
+        notify_new_quote,
+        req.requester.email,
+        req.requester.name,
+        req.id,
+        req.title,
+        current_user.name,
+        quote.price,
+        quote.eta,
+    )
     return quote
 
 
