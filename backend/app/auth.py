@@ -56,3 +56,15 @@ def get_current_user(
     if user is None:
         raise credentials_error
     return user
+
+
+def is_admin(user: models.User) -> bool:
+    admin_email = os.getenv("ADMIN_EMAIL")
+    # Exact match on purpose: no lowercasing (see the explanation above)
+    return bool(admin_email) and user.email == admin_email.strip()
+
+
+def require_admin(current_user: models.User = Depends(get_current_user)) -> models.User:
+    if not is_admin(current_user):
+        raise HTTPException(status_code=403, detail="Admin access only")
+    return current_user

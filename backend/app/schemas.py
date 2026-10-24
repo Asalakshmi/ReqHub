@@ -31,6 +31,7 @@ class UserOut(BaseModel):
     location: Optional[str] = None
     category: Optional[str] = None
     rating_avg: Optional[float] = None
+    is_admin: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -146,3 +147,30 @@ class ReviewOut(BaseModel):
     comment: Optional[str] = None
     reviewer_name: str
     created_at: datetime
+
+
+
+# ---------- Complaints ----------
+class ComplaintCreate(BaseModel):
+    subject: str = Field(min_length=3, max_length=200)
+    message: str = Field(min_length=10, max_length=2000)
+    request_id: Optional[int] = None
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+
+class ComplaintOut(BaseModel):
+    id: int
+    user_id: int
+    request_id: Optional[int] = None
+    subject: str
+    message: str
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AdminComplaintOut(ComplaintOut):
+    user_name: str
+    user_email: str

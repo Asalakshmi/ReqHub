@@ -3,8 +3,10 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Feed from "./pages/Feed";
 import PostNeed from "./pages/PostNeed";
-import RequestDetail from "./pages/RequestDetail";
 import MyJobs from "./pages/MyJobs";
+import RequestDetail from "./pages/RequestDetail";
+import Complaint from "./pages/Complaint";
+import AdminComplaints from "./pages/AdminComplaints";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -46,6 +48,22 @@ function App() {
         element={
           <ProtectedRoute>
             <RequestDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/complaint"
+        element={
+          <ProtectedRoute>
+            <Complaint />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/complaints"
+        element={
+          <ProtectedRoute>
+            <AdminComplaints />
           </ProtectedRoute>
         }
       />

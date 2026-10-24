@@ -105,3 +105,20 @@ class Rating(Base):
     __table_args__ = (
         CheckConstraint("stars >= 1 AND stars <= 5", name="check_rating_stars"),
     )
+
+
+
+class Complaint(Base):
+    __tablename__ = "complaints"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    request_id = Column(Integer, ForeignKey("requests.id", ondelete="SET NULL"), nullable=True)
+    subject = Column(String(200), nullable=False)
+    message = Column(Text, nullable=False)
+    status = Column(String(20), nullable=False, default="open")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        CheckConstraint("status IN ('open', 'resolved')", name="check_complaint_status"),
+    )

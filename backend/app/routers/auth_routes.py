@@ -7,6 +7,7 @@ from app.auth import (
     create_access_token,
     get_current_user,
     hash_password,
+    is_admin,
     verify_password,
 )
 from app.database import get_db
@@ -51,4 +52,6 @@ def login(
 
 @router.get("/me", response_model=schemas.UserOut)
 def read_me(current_user: models.User = Depends(get_current_user)):
-    return current_user
+    user_out = schemas.UserOut.model_validate(current_user)
+    user_out.is_admin = is_admin(current_user)
+    return user_out

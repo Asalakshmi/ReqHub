@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app import models  # noqa: F401  (makes sure all tables are known)
+from app.database import Base, engine
 from app.routers import (
     auth_routes,
     request_routes,
@@ -11,9 +13,13 @@ from app.routers import (
     message_routes,
     rating_routes,
     user_routes,
+    complaint_routes,
 )
 
 load_dotenv()
+
+# Creates any missing tables (for example "complaints") when the server starts
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="ReqHub API")
 
@@ -36,6 +42,7 @@ app.include_router(quote_routes.router)
 app.include_router(message_routes.router)
 app.include_router(rating_routes.router)
 app.include_router(user_routes.router)
+app.include_router(complaint_routes.router)
 
 
 @app.get("/")

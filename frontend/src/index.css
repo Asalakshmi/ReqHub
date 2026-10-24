@@ -434,3 +434,24 @@ h2 {
   color: white;
   background: var(--mauve);
 }
+
+.complaint-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.complaint-head h3 {
+  margin: 0;
+}
+
+.complaint-body {
+  margin: 10px 0;
+  white-space: pre-wrap;
+}
+
+.page button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
