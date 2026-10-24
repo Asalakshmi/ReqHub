@@ -16,6 +16,7 @@ class UserCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     email: EmailStr
     password: str = Field(min_length=6, max_length=72)
+    code: str = Field(pattern=r"^\d{6}$")
     role: Literal["requester", "provider", "both"] = "both"
     phone: Optional[str] = None
     location: Optional[str] = None
@@ -174,3 +175,8 @@ class ComplaintOut(BaseModel):
 class AdminComplaintOut(ComplaintOut):
     user_name: str
     user_email: str
+
+
+
+class SendCodeRequest(BaseModel):
+    email: EmailStr

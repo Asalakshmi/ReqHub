@@ -4,23 +4,29 @@ import os
 
 import requests
 
+from app.otp import CODE_LIFETIME_MINUTES
+
 logger = logging.getLogger("reqhub.email")
 
 BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 
 
-def send_email(to_email: str, to_name: str, subject: str, body_html: str) -> None:
+def send_email(to_email: str, to_name: str, subject: str, body_html: str) -> bool:
     api_key = os.getenv("BREVO_API_KEY")
     sender_email = os.getenv("EMAIL_SENDER")
     sender_name = os.getenv("EMAIL_SENDER_NAME", "ReqHub")
 
     if not api_key or not sender_email:
         logger.warning("Email is not configured, skipping email to %s", to_email)
-        return
+        return False
+
+    recipient = {"email": to_email}
+    if to_name:
+        recipient["name"] = to_name
 
     payload = {
         "sender": {"name": sender_name, "email": sender_email},
-        "to": [{"email": to_email, "name": to_name}],
+        "to": [recipient],
         "subject": subject,
         "htmlContent": body_html,
     }
@@ -38,8 +44,21 @@ def send_email(to_email: str, to_name: str, subject: str, body_html: str) -> Non
                 response.status_code,
                 response.text,
             )
+            return False
+        return True
     except requests.RequestException as exc:
         logger.error("Could not send email: %s", exc)
+        return False
+
+
+def send_verification_code(to_email: str, code: str) -> bool:
+    body = f"""
+    <p>Your ReqHub verification code is:</p>
+    <p style="font-size:28px;font-weight:bold;letter-spacing:6px;">{code}</p>
+    <p>It expires in {CODE_LIFETIME_MINUTES} minutes. If you did not try to create
+    a ReqHub account, you can ignore this email.</p>
+    """
+    return send_email(to_email, "", "Your ReqHub verification code", body)
 
 
 def notify_new_quote(

@@ -455,3 +455,30 @@ h2 {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.info {
+  padding: 8px 12px;
+  color: #25603a;
+  background: #eef5ec;
+  border-radius: 8px;
+}
+
+.page .text-btn {
+  padding: 0;
+  margin-right: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mauve);
+  background: none;
+}
+
+.page .text-btn:hover {
+  background: none;
+  text-decoration: underline;
+  transform: none;
+}
+
+.page .text-btn:disabled {
+  color: var(--muted);
+  text-decoration: none;
+}

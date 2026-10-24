@@ -122,3 +122,15 @@ class Complaint(Base):
     __table_args__ = (
         CheckConstraint("status IN ('open', 'resolved')", name="check_complaint_status"),
     )
+
+
+
+class EmailCode(Base):
+    __tablename__ = "email_codes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    code_hash = Column(String(64), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    attempts = Column(Integer, nullable=False, default=0)
+    sent_at = Column(DateTime(timezone=True), nullable=False)

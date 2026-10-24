@@ -42,6 +42,11 @@ ReqHub reverses the flow:
 - Chat opens only after a quote is accepted, and only the two people involved can read it
 - Ratings open only after the job is completed, one per person per job, and each user's average rating is recalculated from all their ratings
 
+- Location picker with an interactive map: search a place, click the map or drag a pin; coordinates are saved with each request
+- Email notification to the requester when a provider sends a quote (HTTP email API)
+- Ratings are one-way: requesters rate providers, and provider profiles show reviews
+- Complaint box: requesters file complaints that only the admin can read and resolve
+
 ## Tech stack
 
 | Layer | Technology |
@@ -142,6 +147,9 @@ _Add screenshots here: login, request feed, request detail with quotes, chat, ra
 - No automated tests yet.
 - Expired requests are updated when requests are read, not by a background job.
 - Free-tier hosting means a slow first request after idle time.
+- Map search uses OpenStreetMap's free search service, so heavy use needs a different geocoder
+- Notification emails come from an unverified sender domain and can land in spam
+- The admin is identified by an environment variable; a production system would use a role column
 
 ## Future improvements
 
