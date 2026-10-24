@@ -362,3 +362,75 @@ h2 {
     padding: 20px;
   }
 }
+
+.page .link-btn {
+  padding: 0;
+  margin: 6px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mauve);
+  background: none;
+}
+
+.page .link-btn:hover {
+  background: none;
+  text-decoration: underline;
+  transform: none;
+}
+
+.reviews {
+  margin-top: 6px;
+}
+
+.review {
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.review p {
+  margin: 2px 0;
+}
+
+.stars {
+  color: #d9972b;
+}
+
+.map-box {
+  position: relative;
+  z-index: 0;
+  height: 280px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.map-box.hidden {
+  display: none;
+}
+
+.picker-row {
+  display: flex;
+  gap: 8px;
+}
+
+.page .picker-row input {
+  flex: 1;
+  width: auto;
+  margin: 0;
+}
+
+.picker-actions {
+  margin: 8px 0;
+}
+
+.page .ghost-btn {
+  color: var(--mauve);
+  background: transparent;
+  border: 1px solid var(--mauve);
+}
+
+.page .ghost-btn:hover {
+  color: white;
+  background: var(--mauve);
+}

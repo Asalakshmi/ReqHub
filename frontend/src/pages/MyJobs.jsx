@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar";
+import Reviews from "../components/Reviews";
 
 function MyJobs() {
   const navigate = useNavigate();
@@ -53,13 +54,16 @@ function MyJobs() {
 
         {!loading && !error && (
           <>
-            {user && (
-              <p className="meta">
-                {user.name} ·{" "}
-                {user.rating_avg
-                  ? `★ ${user.rating_avg} average rating`
-                  : "No ratings yet"}
-              </p>
+            {user && user.role !== "requester" && (
+              <>
+                <p className="meta">
+                  {user.name} ·{" "}
+                  {user.rating_avg
+                    ? `★ ${user.rating_avg} average rating`
+                    : "No ratings yet"}
+                </p>
+                <Reviews userId={user.id} label="See my reviews" />
+              </>
             )}
 
             <h2>Requests I posted</h2>

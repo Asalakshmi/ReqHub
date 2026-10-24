@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar";
+import LocationPicker from "../components/LocationPicker";
 
 const CATEGORIES = [
   "Home Repair",
@@ -17,9 +18,9 @@ function PostNeed() {
     title: "",
     description: "",
     category: "Home Repair",
-    location: "",
     expiry: "",
   });
+  const [place, setPlace] = useState({ text: "", lat: null, lng: null });
   const [error, setError] = useState("");
 
   function handleChange(e) {
@@ -29,13 +30,20 @@ function PostNeed() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    if (!place.text.trim()) {
+      setError("Please choose a location");
+      return;
+    }
+
     try {
       await api.post("/requests/", {
         title: form.title,
         description: form.description || null,
         category: form.category,
-        location: form.location,
-        // converts your local time into UTC so the server reads it correctly
+        location: place.text.trim(),
+        latitude: place.lat,
+        longitude: place.lng,
         expiry_time: new Date(form.expiry).toISOString(),
       });
       navigate("/feed");
@@ -85,13 +93,7 @@ function PostNeed() {
           </select>
 
           <label>Location</label>
-          <input
-            name="location"
-            placeholder="e.g. Kakkanad, Kochi"
-            value={form.location}
-            onChange={handleChange}
-            required
-          />
+          <LocationPicker initial={place} onChange={setPlace} />
 
           <label>Needed by</label>
           <input

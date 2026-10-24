@@ -36,6 +36,8 @@ def create_request(
         description=request_in.description,
         category=request_in.category,
         location=request_in.location,
+        latitude=request_in.latitude,
+        longitude=request_in.longitude,
         expiry_time=request_in.expiry_time,
     )
     db.add(new_request)

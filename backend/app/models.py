@@ -42,6 +42,8 @@ class Request(Base):
     category = Column(String(100), nullable=False, index=True)
     location = Column(String(150), nullable=False, index=True)
     expiry_time = Column(DateTime(timezone=True), nullable=False)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     status = Column(String(20), nullable=False, default="open")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

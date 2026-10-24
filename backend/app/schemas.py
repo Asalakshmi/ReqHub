@@ -46,6 +46,8 @@ class RequestCreate(BaseModel):
     description: Optional[str] = None
     category: Category
     location: str = Field(min_length=2, max_length=150)
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180)
     expiry_time: datetime
 
     @field_validator("expiry_time")
@@ -65,6 +67,8 @@ class RequestOut(BaseModel):
     description: Optional[str] = None
     category: str
     location: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     expiry_time: datetime
     status: str
     created_at: datetime
@@ -135,3 +139,10 @@ class RatingOut(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class ReviewOut(BaseModel):
+    id: int
+    stars: int
+    comment: Optional[str] = None
+    reviewer_name: str
+    created_at: datetime

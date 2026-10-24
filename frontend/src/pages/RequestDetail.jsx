@@ -4,6 +4,8 @@ import api from "../api";
 import Navbar from "../components/Navbar";
 import Chat from "../components/Chat";
 import RatingBox from "../components/RatingBox";
+import Reviews from "../components/Reviews";
+import LocationMap from "../components/LocationMap";
 
 function errorText(err, fallback) {
   const detail = err.response?.data?.detail;
@@ -150,6 +152,11 @@ function RequestDetail() {
         </p>
         {request.description && <p>{request.description}</p>}
 
+        <LocationMap
+          location={request.location}
+          lat={request.latitude}
+          lng={request.longitude}
+        />
         {error && <p className="error">{error}</p>}
 
         {isOwner ? (
@@ -172,6 +179,7 @@ function RequestDetail() {
                 </p>
                 {q.eta && <p className="meta">Arrives: {q.eta}</p>}
                 {q.message && <p>{q.message}</p>}
+                <Reviews userId={q.provider_id} />
                 <span className={`badge ${q.status}`}>{q.status}</span>
                 {request.status === "open" && q.status === "pending" && (
                   <button
@@ -263,14 +271,20 @@ function RequestDetail() {
 
         {inJob && <Chat requestId={request.id} userId={user.id} />}
 
-        {inJob && request.status === "completed" && (
+        {inJob && request.status === "completed" && isOwner && (
           <RatingBox
             requestId={request.id}
-            personLabel={
-              isOwner ? acceptedQuote.provider.name : "the requester"
-            }
+            personLabel={acceptedQuote.provider.name}
           />
         )}
+
+        {inJob && request.status === "completed" && !isOwner && (
+          <div className="section">
+            <h2>Job completed</h2>
+            <p>The requester has marked this job complete. Thanks for your work!</p>
+          </div>
+        )}
+        
       </div>
     </>
   );

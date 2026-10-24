@@ -10,6 +10,7 @@ from app.routers import (
     quote_routes,
     message_routes,
     rating_routes,
+    user_routes,
 )
 
 load_dotenv()
@@ -34,6 +35,7 @@ app.include_router(request_routes.router)
 app.include_router(quote_routes.router)
 app.include_router(message_routes.router)
 app.include_router(rating_routes.router)
+app.include_router(user_routes.router)
 
 
 @app.get("/")

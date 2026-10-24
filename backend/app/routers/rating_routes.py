@@ -36,7 +36,7 @@ def complete_request(
     response_model=schemas.RatingOut,
     status_code=201,
 )
-def rate_other_party(
+def rate_provider(
     request_id: int,
     rating_in: schemas.RatingCreate,
     db: Session = Depends(get_db),
@@ -45,6 +45,8 @@ def rate_other_party(
     req = db.query(models.Request).filter(models.Request.id == request_id).first()
     if not req:
         raise HTTPException(status_code=404, detail="Request not found")
+    if req.requester_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the requester can rate the provider")
     if req.status != "completed":
         raise HTTPException(status_code=400, detail="You can rate only after completion")
 
@@ -56,14 +58,8 @@ def rate_other_party(
         )
         .first()
     )
-
-    # Work out who the other person is
-    if current_user.id == req.requester_id:
-        to_user_id = accepted_quote.provider_id
-    elif current_user.id == accepted_quote.provider_id:
-        to_user_id = req.requester_id
-    else:
-        raise HTTPException(status_code=403, detail="You were not part of this job")
+    if not accepted_quote:
+        raise HTTPException(status_code=400, detail="No accepted quote found")
 
     already = (
         db.query(models.Rating)
@@ -76,23 +72,25 @@ def rate_other_party(
     if already:
         raise HTTPException(status_code=400, detail="You already rated this job")
 
+    provider_id = accepted_quote.provider_id
+
     rating = models.Rating(
         request_id=request_id,
         from_user_id=current_user.id,
-        to_user_id=to_user_id,
+        to_user_id=provider_id,
         stars=rating_in.stars,
         comment=rating_in.comment,
     )
     db.add(rating)
-    db.flush()  # makes the new rating visible to the average below
+    db.flush()
 
     average = (
         db.query(func.avg(models.Rating.stars))
-        .filter(models.Rating.to_user_id == to_user_id)
+        .filter(models.Rating.to_user_id == provider_id)
         .scalar()
     )
-    rated_user = db.query(models.User).filter(models.User.id == to_user_id).first()
-    rated_user.rating_avg = round(float(average), 2)
+    provider = db.query(models.User).filter(models.User.id == provider_id).first()
+    provider.rating_avg = round(float(average), 2)
 
     db.commit()
     db.refresh(rating)
